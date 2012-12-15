@@ -20,6 +20,9 @@ class HttpRequest
         # spoof a socket read on the request string
         request = WEBrick::HTTPRequest.new(WEBrick::Config::HTTP)
         socket_spoof = StringIO.open(request_str)
+        #puts "request_str"
+        #puts request_str
+        #puts "end"
         request.parse(socket_spoof)
         # grab HTTP request parameters
         @type = request.request_method

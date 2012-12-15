@@ -1,3 +1,4 @@
+#!/usr/local/bin/ruby 
 require 'open3'
 require 'json'
 require './tcpserver'

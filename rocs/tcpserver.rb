@@ -66,22 +66,31 @@ HttpServer
       @status = :Running
       while @status == :Running
         begin
-          puts "listening"
-              puts "have client"
-              client_sock = @sock.accept
-              if client_sock
-                puts "#{client_sock}"
-                puts "some client is coming"
+          	puts "listening"
+            puts "have client"
+            client_sock = @sock.accept
+			if client_sock
+				puts "#{client_sock}"
+				puts "some client is coming"
+			 	all_data = []
+			 	while partial_data = client_sock.gets and partial_data !~ /^\s*$/m
+			  		#puts partial_data
+			  		all_data << partial_data
+			  	end
+				print "done"
+			#socket.close
+			  request = all_data.join()
+			  request =~/^Content-Length:\s*(\d*)/
+			  length = $1
+			  length = length.to_i
+			  #puts "length is #{length}\n\n\n"
+			  request = request + "\n" + client_sock.read(length)
+			  response = @http.process(request)
+			  @logger.info(response.to_s)
+			  write_data(client_sock, response)
 
-                  request = client_sock.gets
-                  puts "#{request}"
-                  response = request
-                  response = @http.process(request)
-                  @logger.info(response.to_s)
-                  write_data(client_sock, response)
-
-                  client_sock.close
-              end   
+			  client_sock.close
+			end   
 
         rescue Errno::EBADF, IOError => ex
           # if the listening socket was closed in TcpServer#shutdown,
